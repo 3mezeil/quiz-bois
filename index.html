@@ -12,14 +12,21 @@
             padding: 0;
         }
 
+        html,
+        body {
+            height: 100dvh;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: pan-y;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #2b1d0c 0%, #1a1208 100%);
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 12px;
             color: #333;
         }
 
@@ -27,14 +34,16 @@
             background: #ffffff;
             width: 100%;
             max-width: 440px;
+            height: 100%;
+            max-height: 800px;
             border-radius: 20px;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             text-align: center;
-            min-height: 720px;
-            /* Agrandie pour accueillir les numéros */
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Animations */
@@ -81,8 +90,9 @@
         }
 
         .badge-container {
-            height: 30px;
-            margin-bottom: 12px;
+            height: 28px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
 
         .badge {
@@ -97,20 +107,22 @@
 
         h1 {
             font-size: 1.35rem;
-            height: 30px;
-            margin-bottom: 16px;
+            height: 28px;
+            margin-bottom: 12px;
             color: #271a0c;
+            flex-shrink: 0;
         }
 
         .image-wrapper {
             width: 100%;
-            height: 280px;
+            flex: 1 1 120px;
+            max-height: 280px;
+            min-height: 120px;
             border-radius: 14px;
             overflow: hidden;
             background-color: #eee;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-            flex-shrink: 0;
             cursor: pointer;
             position: relative;
         }
@@ -127,7 +139,6 @@
             transform: scale(1.03);
         }
 
-        /* Fenêtre modale */
         .modal {
             display: none;
             position: fixed;
@@ -135,7 +146,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -153,9 +164,10 @@
             display: block;
             font-size: 0.95rem;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #555;
             height: 20px;
+            flex-shrink: 0;
         }
 
         input[type="text"] {
@@ -168,14 +180,14 @@
             outline: none;
             transition: border-color 0.2s;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         input[type="text"]:focus {
             border-color: #8d5b28;
         }
 
-        /* Les couleurs du champ quand il est désactivé (question déjà répondue) */
         input[type="text"]:disabled {
             background-color: #f8f9fa;
             color: #271a0c;
@@ -186,6 +198,7 @@
         .btn-row {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         button {
@@ -233,9 +246,10 @@
         .feedback {
             height: 28px;
             line-height: 28px;
-            margin-top: 16px;
+            margin-top: 10px;
             font-weight: 600;
             font-size: 1rem;
+            flex-shrink: 0;
         }
 
         .feedback.success {
@@ -250,14 +264,14 @@
             color: #0056b3;
         }
 
-        /* Barre de navigation des numéros */
         .pagination {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             justify-content: center;
-            margin-top: auto;
-            margin-bottom: 16px;
+            margin-top: 16px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .page-num {
@@ -299,6 +313,8 @@
             background: #eee;
             border-radius: 3px;
             overflow: hidden;
+            flex-shrink: 0;
+            margin-top: auto;
         }
 
         .progress-bar {
@@ -327,7 +343,7 @@
 
 <body>
 
-    <div id="image-modal" class="modal" onclick="closeModal()">
+    <div id="image-modal" class="modal">
         <img id="modal-img" src="" alt="Image plein écran">
     </div>
 
@@ -384,19 +400,47 @@
 
         let woods = [];
         let currentIndex = 0;
-        let highestIndexReached = 0; // Garde en mémoire la question la plus lointaine atteinte
+        let highestIndexReached = 0;
         let currentState = 'answering';
 
+        const modal = document.getElementById("image-modal");
+
         function openModal() {
-            const modal = document.getElementById("image-modal");
-            const modalImg = document.getElementById("modal-img");
-            modalImg.src = document.getElementById("wood-img").src;
+            document.getElementById("modal-img").src = document.getElementById("wood-img").src;
             modal.style.display = "flex";
         }
 
         function closeModal() {
-            document.getElementById("image-modal").style.display = "none";
+            modal.style.display = "none";
         }
+
+        modal.addEventListener('click', closeModal);
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        modal.addEventListener('touchstart', function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        modal.addEventListener('touchend', function (e) {
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+
+            if (Math.abs(touchEndX - touchStartX) > 40 || Math.abs(touchEndY - touchStartY) > 40) {
+                closeModal();
+            }
+        }, { passive: true });
+
+        document.getElementById("answer-input").addEventListener("focus", function () {
+            setTimeout(() => {
+                document.getElementById("quiz-card").scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }, 300);
+        });
 
         function shuffleArray(array) {
             const newArray = [...array];
@@ -423,7 +467,6 @@
         }
 
         function initQuiz() {
-            // On ajoute un statut à chaque bois pour savoir s'il a été répondu
             woods = shuffleArray(originalWoods).map(wood => ({
                 ...wood,
                 status: 'unanswered'
@@ -445,7 +488,6 @@
                 if (i === currentIndex) {
                     btn.classList.add("active");
                 } else if (i <= highestIndexReached) {
-                    // Rendre cliquables toutes les questions déjà visitées
                     btn.classList.add("reachable");
                     btn.onclick = () => jumpToQuestion(i);
                 }
@@ -460,7 +502,6 @@
         }
 
         function displayQuestion() {
-            // Met à jour la question la plus lointaine atteinte
             if (currentIndex > highestIndexReached) {
                 highestIndexReached = currentIndex;
             }
@@ -476,7 +517,6 @@
             const giveupBtn = document.getElementById("giveup-btn");
             const feedback = document.getElementById("feedback-msg");
 
-            // Si c'est une question à laquelle on n'a pas encore répondu
             if (item.status === 'unanswered') {
                 input.value = "";
                 input.disabled = false;
@@ -489,9 +529,13 @@
                 giveupBtn.style.display = "block";
 
                 currentState = 'answering';
-                input.focus();
+
+                // Focus automatique lors de l'arrivée sur une nouvelle question
+                setTimeout(() => {
+                    input.focus();
+                }, 50);
+
             } else {
-                // Si on retourne sur une question déjà répondue
                 input.value = item.name;
                 input.disabled = true;
                 giveupBtn.style.display = "none";
@@ -528,10 +572,12 @@
 
             if (validList.includes(val)) {
                 triggerAnimation("pulse");
-                item.status = 'answered'; // Enregistre que c'est répondu
+                item.status = 'answered';
 
-                input.value = item.name; // Affiche la belle orthographe
+                input.value = item.name;
                 input.disabled = true;
+                input.blur();
+
                 feedback.textContent = `Bonne réponse : ${item.name}`;
                 feedback.className = "feedback success";
 
@@ -539,10 +585,14 @@
                 actionBtn.textContent = "Suivant ➔";
                 actionBtn.className = "btn-next";
                 currentState = 'next';
+
+                // On redonne le focus à la fenêtre générale pour que 'Enter' soit capté facilement
+                window.focus();
             } else {
                 triggerAnimation("shake");
                 feedback.textContent = "Mauvaise réponse, essaie encore.";
                 feedback.className = "feedback error";
+                input.focus();
             }
         }
 
@@ -553,10 +603,11 @@
             const actionBtn = document.getElementById("action-btn");
             const giveupBtn = document.getElementById("giveup-btn");
 
-            item.status = 'answered'; // Enregistre que c'est répondu (même si abandonné)
+            item.status = 'answered';
 
             input.value = item.name;
             input.disabled = true;
+            input.blur();
 
             feedback.textContent = `La réponse était : ${item.name}`;
             feedback.className = "feedback info";
@@ -565,6 +616,8 @@
             actionBtn.textContent = "Suivant ➔";
             actionBtn.className = "btn-next";
             currentState = 'next';
+
+            window.focus();
         }
 
         function goToNext() {
@@ -584,8 +637,16 @@
             }
         }
 
-        document.getElementById("answer-input").addEventListener("keydown", function (e) {
+        // Écouteur global sur le document entier pour la touche Entrée
+        document.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
+                e.preventDefault(); // Évite tout comportement par défaut indésirable
+
+                // Si on est en train de répondre, on ferme le clavier virtuel (mobile) avant de valider
+                if (currentState === 'answering' && document.activeElement === document.getElementById("answer-input")) {
+                    document.getElementById("answer-input").blur();
+                }
+
                 handleAction();
             }
         });
