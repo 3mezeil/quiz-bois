@@ -31,6 +31,58 @@
             padding: 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             text-align: center;
+            min-height: 720px;
+            /* Agrandie pour accueillir les numéros */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Animations */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            50% {
+                transform: translateX(6px);
+            }
+
+            75% {
+                transform: translateX(-6px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .pulse {
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        .badge-container {
+            height: 30px;
+            margin-bottom: 12px;
         }
 
         .badge {
@@ -41,23 +93,26 @@
             background: #fdf3e7;
             padding: 6px 14px;
             border-radius: 50px;
-            margin-bottom: 12px;
         }
 
         h1 {
             font-size: 1.35rem;
+            height: 30px;
             margin-bottom: 16px;
             color: #271a0c;
         }
 
         .image-wrapper {
             width: 100%;
-            height: 320px;
+            height: 280px;
             border-radius: 14px;
             overflow: hidden;
             background-color: #eee;
             margin-bottom: 18px;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
         }
 
         .image-wrapper img {
@@ -65,6 +120,33 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 0.2s;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Fenêtre modale */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .modal img {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+            object-fit: contain;
         }
 
         label {
@@ -73,10 +155,12 @@
             font-weight: 500;
             margin-bottom: 8px;
             color: #555;
+            height: 20px;
         }
 
         input[type="text"] {
             width: 100%;
+            height: 52px;
             padding: 14px 16px;
             font-size: 1.05rem;
             border: 2px solid #ddd;
@@ -84,11 +168,19 @@
             outline: none;
             transition: border-color 0.2s;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         input[type="text"]:focus {
             border-color: #8d5b28;
+        }
+
+        /* Les couleurs du champ quand il est désactivé (question déjà répondue) */
+        input[type="text"]:disabled {
+            background-color: #f8f9fa;
+            color: #271a0c;
+            font-weight: bold;
+            border-color: #e9ecef;
         }
 
         .btn-row {
@@ -98,13 +190,13 @@
 
         button {
             flex: 1;
-            padding: 14px;
-            font-size: 1rem;
+            height: 52px;
+            font-size: 1.05rem;
             font-weight: 600;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         button:active {
@@ -116,14 +208,32 @@
             color: #fff;
         }
 
+        .btn-giveup {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+        }
+
         .btn-next {
             background-color: #28a745;
             color: #fff;
         }
 
+        .btn-restart {
+            flex: none;
+            background-color: #271a0c;
+            color: #fff;
+            padding: 0 40px;
+            font-size: 1.1rem;
+            margin-top: 30px;
+            width: auto;
+            min-width: 250px;
+        }
+
         .feedback {
-            min-height: 28px;
-            margin-top: 14px;
+            height: 28px;
+            line-height: 28px;
+            margin-top: 16px;
             font-weight: 600;
             font-size: 1rem;
         }
@@ -136,12 +246,58 @@
             color: #dc3545;
         }
 
+        .feedback.info {
+            color: #0056b3;
+        }
+
+        /* Barre de navigation des numéros */
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: auto;
+            margin-bottom: 16px;
+        }
+
+        .page-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f1f3f5;
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: not-allowed;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .page-num.reachable {
+            background: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .page-num.reachable:hover {
+            background: #dee2e6;
+        }
+
+        .page-num.active {
+            background: #8d5b28;
+            color: #fff;
+            cursor: default;
+            transform: scale(1.1);
+        }
+
         .progress-bar-container {
             width: 100%;
             height: 6px;
             background: #eee;
             border-radius: 3px;
-            margin-top: 18px;
             overflow: hidden;
         }
 
@@ -149,7 +305,7 @@
             height: 100%;
             background: #8d5b28;
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s ease;
         }
 
         .finished-title {
@@ -157,29 +313,45 @@
             color: #28a745;
             margin: 16px 0 10px 0;
         }
+
+        .end-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            flex-grow: 1;
+        }
     </style>
 </head>
 
 <body>
 
+    <div id="image-modal" class="modal" onclick="closeModal()">
+        <img id="modal-img" src="" alt="Image plein écran">
+    </div>
+
     <div class="card" id="quiz-card">
-        <span class="badge" id="progress-badge">Bois 1 sur 20</span>
+        <div class="badge-container">
+            <span class="badge" id="progress-badge">Bois 1 sur 20</span>
+        </div>
         <h1>Identifier l'essence</h1>
 
-        <div class="image-wrapper">
+        <div class="image-wrapper" onclick="openModal()">
             <img id="wood-img" src="" alt="Échantillon de bois">
         </div>
 
         <label for="answer-input">Quel est le nom de cette essence ?</label>
-        <input type="text" id="answer-input" placeholder="Ex: Érable, Padouk..." autocomplete="off" autocorrect="off"
-            spellcheck="false">
+        <input type="text" id="answer-input" autocomplete="off" autocorrect="off" spellcheck="false">
 
         <div class="btn-row">
-            <button class="btn-validate" id="btn-validate" onclick="submitAnswer()">Valider</button>
-            <button class="btn-next" id="btn-next" style="display: none;" onclick="goToNext()">Suivant ➔</button>
+            <button id="giveup-btn" class="btn-giveup" onclick="giveUp()">Abandonner</button>
+            <button id="action-btn" class="btn-validate" onclick="handleAction()">Valider</button>
         </div>
 
         <div class="feedback" id="feedback-msg"></div>
+
+        <div class="pagination" id="pagination"></div>
 
         <div class="progress-bar-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -187,33 +359,54 @@
     </div>
 
     <script>
-        // Liste complète de tes 20 questions
-        const woods = [
-            { file: "padouk.jpg", answers: ["padouk", "padouk afrique"] },
-            { file: "bubinga.jpg", answers: ["bubinga"] },
-            { file: "amarante.jpg", answers: ["amarante"] },
-            { file: "frene.jpg", answers: ["frene"] },
-            { file: "peuplier.jpg", answers: ["peuplier"] },
-            { file: "teck.jpg", answers: ["teck"] },
-            { file: "acajou.jpg", answers: ["acajou"] },
-            { file: "erable.jpg", answers: ["erable"] },
-            { file: "chene-rouge-dosse.jpg", answers: ["chene rouge dosse", "chene rouge", "chene"] },
-            { file: "sapin-douglas.jpg", answers: ["sapin douglas", "douglas", "sapin"] },
-            { file: "hetre.jpg", answers: ["hetre"] },
-            { file: "merisier.jpg", answers: ["merisier"] },
-            { file: "cerisier.jpg", answers: ["cerisier"] },
-            { file: "cedre.jpg", answers: ["cedre odoriferant", "cedre"] },
-            { file: "caryer.jpg", answers: ["caryer", "hickory", "caryer hickory"] },
-            { file: "tilleul.jpg", answers: ["tilleul"] },
-            { file: "noyer-noir.jpg", answers: ["noyer noir"] },
-            { file: "noyer-cendre.jpg", answers: ["noyer cendre"] },
-            { file: "chene-rouge-quartier.jpg", answers: ["chene rouge quartier", "chene sur quartier", "chene rouge", "chene"] },
-            { file: "pin-blanc.jpg", answers: ["pin blanc", "pin"] }
+        const originalWoods = [
+            { file: "padouk.jpg", name: "Padouk", answers: ["padouk", "padouk afrique"] },
+            { file: "bubinga.jpg", name: "Bubinga", answers: ["bubinga"] },
+            { file: "amarante.jpg", name: "Amarante", answers: ["amarante"] },
+            { file: "frene.jpg", name: "Frêne", answers: ["frene"] },
+            { file: "peuplier.jpg", name: "Peuplier", answers: ["peuplier"] },
+            { file: "teck.jpg", name: "Teck", answers: ["teck"] },
+            { file: "acajou.jpg", name: "Acajou", answers: ["acajou"] },
+            { file: "erable.jpg", name: "Érable", answers: ["erable"] },
+            { file: "chene-rouge-dosse.jpg", name: "Chêne rouge (dosse)", answers: ["chene rouge dosse", "chene rouge", "chene"] },
+            { file: "sapin-douglas.jpg", name: "Sapin Douglas", answers: ["sapin douglas", "douglas", "sapin"] },
+            { file: "hetre.jpg", name: "Hêtre", answers: ["hetre"] },
+            { file: "merisier.jpg", name: "Merisier", answers: ["merisier"] },
+            { file: "cerisier.jpg", name: "Cerisier", answers: ["cerisier"] },
+            { file: "cedre.jpg", name: "Cèdre odoriférant", answers: ["cedre odoriferant", "cedre"] },
+            { file: "caryer.jpg", name: "Caryer (Hickory)", answers: ["caryer", "hickory", "caryer hickory"] },
+            { file: "tilleul.jpg", name: "Tilleul", answers: ["tilleul"] },
+            { file: "noyer-noir.jpg", name: "Noyer noir", answers: ["noyer noir"] },
+            { file: "noyer-cendre.jpg", name: "Noyer cendré", answers: ["noyer cendre"] },
+            { file: "chene-rouge-quartier.jpg", name: "Chêne rouge (quartier)", answers: ["chene rouge quartier", "chene sur quartier", "chene rouge", "chene"] },
+            { file: "pin-blanc.jpg", name: "Pin blanc", answers: ["pin blanc", "pin"] }
         ];
 
+        let woods = [];
         let currentIndex = 0;
+        let highestIndexReached = 0; // Garde en mémoire la question la plus lointaine atteinte
+        let currentState = 'answering';
 
-        // Fonction pour enlever les accents et mettre en minuscules
+        function openModal() {
+            const modal = document.getElementById("image-modal");
+            const modalImg = document.getElementById("modal-img");
+            modalImg.src = document.getElementById("wood-img").src;
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("image-modal").style.display = "none";
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
         function stripAccents(str) {
             return str
                 .normalize("NFD")
@@ -222,41 +415,156 @@
                 .trim();
         }
 
+        function triggerAnimation(type) {
+            const card = document.getElementById("quiz-card");
+            card.classList.remove("shake", "pulse");
+            void card.offsetWidth;
+            card.classList.add(type);
+        }
+
+        function initQuiz() {
+            // On ajoute un statut à chaque bois pour savoir s'il a été répondu
+            woods = shuffleArray(originalWoods).map(wood => ({
+                ...wood,
+                status: 'unanswered'
+            }));
+            currentIndex = 0;
+            highestIndexReached = 0;
+            displayQuestion();
+        }
+
+        function renderPagination() {
+            const container = document.getElementById("pagination");
+            container.innerHTML = "";
+
+            for (let i = 0; i < woods.length; i++) {
+                const btn = document.createElement("div");
+                btn.className = "page-num";
+                btn.textContent = i + 1;
+
+                if (i === currentIndex) {
+                    btn.classList.add("active");
+                } else if (i <= highestIndexReached) {
+                    // Rendre cliquables toutes les questions déjà visitées
+                    btn.classList.add("reachable");
+                    btn.onclick = () => jumpToQuestion(i);
+                }
+
+                container.appendChild(btn);
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            displayQuestion();
+        }
+
         function displayQuestion() {
+            // Met à jour la question la plus lointaine atteinte
+            if (currentIndex > highestIndexReached) {
+                highestIndexReached = currentIndex;
+            }
+
+            renderPagination();
+
             const item = woods[currentIndex];
             document.getElementById("wood-img").src = item.file;
-            document.getElementById("answer-input").value = "";
-            document.getElementById("answer-input").disabled = false;
-            document.getElementById("feedback-msg").textContent = "";
-            document.getElementById("feedback-msg").className = "feedback";
-            document.getElementById("btn-validate").style.display = "block";
-            document.getElementById("btn-next").style.display = "none";
             document.getElementById("progress-badge").textContent = `Bois ${currentIndex + 1} sur ${woods.length}`;
 
-            const progressPercent = (currentIndex / woods.length) * 100;
-            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+            const input = document.getElementById("answer-input");
+            const actionBtn = document.getElementById("action-btn");
+            const giveupBtn = document.getElementById("giveup-btn");
+            const feedback = document.getElementById("feedback-msg");
 
-            document.getElementById("answer-input").focus();
+            // Si c'est une question à laquelle on n'a pas encore répondu
+            if (item.status === 'unanswered') {
+                input.value = "";
+                input.disabled = false;
+
+                feedback.textContent = "";
+                feedback.className = "feedback";
+
+                actionBtn.textContent = "Valider";
+                actionBtn.className = "btn-validate";
+                giveupBtn.style.display = "block";
+
+                currentState = 'answering';
+                input.focus();
+            } else {
+                // Si on retourne sur une question déjà répondue
+                input.value = item.name;
+                input.disabled = true;
+                giveupBtn.style.display = "none";
+                actionBtn.textContent = "Suivant ➔";
+                actionBtn.className = "btn-next";
+                currentState = 'next';
+
+                feedback.textContent = `Bois déjà identifié : ${item.name}`;
+                feedback.className = "feedback info";
+            }
+
+            const progressPercent = (highestIndexReached / (woods.length - 1)) * 100;
+            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+        }
+
+        function handleAction() {
+            if (currentState === 'answering') {
+                submitAnswer();
+            } else if (currentState === 'next') {
+                goToNext();
+            }
         }
 
         function submitAnswer() {
+            const item = woods[currentIndex];
             const input = document.getElementById("answer-input");
             const val = stripAccents(input.value);
-            const validList = woods[currentIndex].answers.map(stripAccents);
+            const validList = item.answers.map(stripAccents);
             const feedback = document.getElementById("feedback-msg");
+            const actionBtn = document.getElementById("action-btn");
+            const giveupBtn = document.getElementById("giveup-btn");
 
             if (!val) return;
 
             if (validList.includes(val)) {
-                feedback.textContent = "Bonne réponse ! 🎉";
-                feedback.className = "feedback success";
+                triggerAnimation("pulse");
+                item.status = 'answered'; // Enregistre que c'est répondu
+
+                input.value = item.name; // Affiche la belle orthographe
                 input.disabled = true;
-                document.getElementById("btn-validate").style.display = "none";
-                document.getElementById("btn-next").style.display = "block";
+                feedback.textContent = `Bonne réponse : ${item.name}`;
+                feedback.className = "feedback success";
+
+                giveupBtn.style.display = "none";
+                actionBtn.textContent = "Suivant ➔";
+                actionBtn.className = "btn-next";
+                currentState = 'next';
             } else {
-                feedback.textContent = "Mauvaise réponse, essaie encore !";
+                triggerAnimation("shake");
+                feedback.textContent = "Mauvaise réponse, essaie encore.";
                 feedback.className = "feedback error";
             }
+        }
+
+        function giveUp() {
+            const item = woods[currentIndex];
+            const input = document.getElementById("answer-input");
+            const feedback = document.getElementById("feedback-msg");
+            const actionBtn = document.getElementById("action-btn");
+            const giveupBtn = document.getElementById("giveup-btn");
+
+            item.status = 'answered'; // Enregistre que c'est répondu (même si abandonné)
+
+            input.value = item.name;
+            input.disabled = true;
+
+            feedback.textContent = `La réponse était : ${item.name}`;
+            feedback.className = "feedback info";
+
+            giveupBtn.style.display = "none";
+            actionBtn.textContent = "Suivant ➔";
+            actionBtn.className = "btn-next";
+            currentState = 'next';
         }
 
         function goToNext() {
@@ -266,25 +574,23 @@
             } else {
                 document.getElementById("progress-bar").style.width = "100%";
                 document.getElementById("quiz-card").innerHTML = `
-        <div class="badge">Terminé !</div>
-        <h2 class="finished-title">Félicitations ! 🎉</h2>
-        <p style="color: #666; margin: 12px 0 24px;">Tu as reconnu avec succès les ${woods.length} essences de bois !</p>
-        <button class="btn-validate" onclick="location.reload()">Recommencer le quiz</button>
+        <div class="end-screen">
+          <div class="badge">Terminé</div>
+          <h2 class="finished-title">Félicitations</h2>
+          <p style="color: #666; margin: 12px 0 24px;">Tu as parcouru les ${woods.length} essences de bois.</p>
+          <button class="btn-restart" onclick="location.reload()">Recommencer le quiz</button>
+        </div>
       `;
             }
         }
 
         document.getElementById("answer-input").addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
-                if (document.getElementById("btn-next").style.display === "block") {
-                    goToNext();
-                } else {
-                    submitAnswer();
-                }
+                handleAction();
             }
         });
 
-        window.onload = displayQuestion;
+        window.onload = initQuiz;
     </script>
 
 </body>
