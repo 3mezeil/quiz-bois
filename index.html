@@ -12,21 +12,19 @@
             padding: 0;
         }
 
-        html,
-        body {
-            height: 100dvh;
-            overflow: hidden;
-            overscroll-behavior: none;
-            touch-action: pan-y;
+        html {
+            background-color: #1a1208;
+            height: 100%;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #2b1d0c 0%, #1a1208 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px 16px;
+            padding: 16px 16px 30px 16px;
             color: #333;
         }
 
@@ -37,13 +35,10 @@
             margin: auto;
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
             display: flex;
             flex-direction: column;
-            max-height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         @keyframes shake {
@@ -112,12 +107,11 @@
             flex-shrink: 0;
         }
 
-        /* Conteneur de l'image principale */
         .image-wrapper {
             width: 100%;
-            flex: 1 1 120px;
-            max-height: 280px;
-            min-height: 120px;
+            flex: 1 1 200px;
+            max-height: 360px;
+            min-height: 200px;
             border-radius: 14px;
             overflow: hidden;
             background-color: #eee;
@@ -130,6 +124,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             display: block;
             cursor: pointer;
             transition: transform 0.2s;
@@ -139,7 +134,6 @@
             transform: scale(1.03);
         }
 
-        /* Boutons et points du carrousel */
         .car-btn {
             position: absolute;
             top: 50%;
@@ -194,7 +188,6 @@
             transform: scale(1.2);
         }
 
-        /* Modal plein écran et Zoom */
         .modal {
             display: none;
             position: fixed;
@@ -202,10 +195,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.98);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            touch-action: none;
         }
 
         .modal-close {
@@ -327,12 +321,20 @@
             min-width: 250px;
         }
 
+        /* CORRECTION SÉCURITÉ : Hauteur dynamique pour les textes longs */
         .feedback {
-            height: 28px;
-            line-height: 28px;
+            min-height: 28px;
+            /* min-height au lieu de height strict */
+            line-height: 1.3;
             margin-top: 10px;
+            margin-bottom: 6px;
             font-weight: 600;
             font-size: 1rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
         }
 
         .feedback.success {
@@ -349,14 +351,24 @@
 
         .pagination {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            justify-content: flex-start;
             margin-top: 16px;
             margin-bottom: 12px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .pagination::-webkit-scrollbar {
+            display: none;
         }
 
         .page-num {
+            flex: 0 0 auto;
             width: 32px;
             height: 32px;
             border-radius: 8px;
@@ -376,6 +388,10 @@
             background: #e9ecef;
             color: #495057;
             cursor: pointer;
+        }
+
+        .page-num.reachable:hover {
+            background: #dee2e6;
         }
 
         .page-num.active {
@@ -458,10 +474,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // PARAMÈTRE GLOBAL : Nombre d'images par essence
-        // ==========================================
-        const NOMBRE_IMAGES_PAR_ESSENCE = 3; // Mets 3, 4 ou 5 ici sans problème
+        const NOMBRE_IMAGES_PAR_ESSENCE = 2;
 
         const baseData = [
             { baseFile: "padouk", name: "Padouk", answers: ["padouk", "padouk afrique"] },
@@ -492,9 +505,10 @@
         let currentState = 'answering';
         let activeImageIndex = 0;
 
-        // Variables pour la Modale et le Zoom
         const modal = document.getElementById("image-modal");
         const modalImg = document.getElementById("modal-img");
+        const modalArea = document.getElementById("modal-content-area");
+
         let scale = 1, panX = 0, panY = 0;
         let startDist = 0, startPanX = 0, startPanY = 0;
         let isPanning = false;
@@ -512,7 +526,6 @@
             displayQuestion();
         }
 
-        // ---------- CARROUSEL ----------
         function updateImageViews() {
             const item = woods[currentIndex];
             const currentSrc = item.images[activeImageIndex];
@@ -558,7 +571,6 @@
             resetZoom();
         }
 
-        // ---------- AFFICHAGE QUESTION ----------
         function displayQuestion() {
             if (currentIndex > highestIndexReached) highestIndexReached = currentIndex;
             renderPagination();
@@ -594,7 +606,6 @@
             document.getElementById("progress-bar").style.width = `${progressPercent}%`;
         }
 
-        // ---------- MODALE ET ZOOM ----------
         function openModal() {
             resetZoom();
             modal.style.display = "flex";
@@ -602,21 +613,22 @@
 
         function closeModal() {
             modal.style.display = "none";
-            // Remettre le curseur dans le champ texte automatiquement après fermeture
             if (currentState === 'answering') {
-                setTimeout(() => {
-                    document.getElementById("answer-input").focus();
-                }, 50); // Un léger délai pour laisser la modale disparaître
+                setTimeout(() => { document.getElementById("answer-input").focus(); }, 50);
             }
         }
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal || e.target === modalArea) {
+                closeModal();
+            }
+        });
 
         function resetZoom() {
             scale = 1; panX = 0; panY = 0;
             modalImg.style.transform = `translate(0px, 0px) scale(1)`;
             modalImg.style.transition = "transform 0.2s ease-out";
         }
-
-        const modalArea = document.getElementById("modal-content-area");
 
         modalArea.addEventListener('touchstart', (e) => {
             modalImg.style.transition = "none";
@@ -652,33 +664,51 @@
             }
         });
 
-        let swipeStartX = 0;
+        let swipeStartX = 0, swipeStartY = 0;
         let lastTapTime = 0;
 
         modalArea.addEventListener('touchstart', e => {
-            if (e.touches.length === 1 && scale === 1) swipeStartX = e.touches[0].screenX;
+            if (e.touches.length === 1 && scale === 1) {
+                swipeStartX = e.touches[0].clientX;
+                swipeStartY = e.touches[0].clientY;
+            }
         }, { passive: true });
 
         modalArea.addEventListener('touchend', e => {
             if (e.changedTouches.length === 1) {
                 if (scale === 1) {
-                    let swipeEndX = e.changedTouches[0].screenX;
-                    if (swipeStartX - swipeEndX > 50) nextImg(null);
-                    if (swipeEndX - swipeStartX > 50) prevImg(null);
+                    let swipeEndX = e.changedTouches[0].clientX;
+                    let swipeEndY = e.changedTouches[0].clientY;
+                    let diffX = swipeStartX - swipeEndX;
+                    let diffY = swipeStartY - swipeEndY;
+
+                    if (diffY < -60 && Math.abs(diffX) < 50) {
+                        closeModal();
+                        return;
+                    }
+
+                    if (diffX > 50) nextImg(null);
+                    if (diffX < -50) prevImg(null);
                 }
+
                 const now = new Date().getTime();
                 if (now - lastTapTime < 300) {
-                    if (scale > 1) resetZoom();
-                    else {
-                        scale = 2.5; panX = 0; panY = 0;
-                        modalImg.style.transform = `translate(0px, 0px) scale(${scale})`;
+                    if (scale > 1) {
+                        resetZoom();
+                    } else {
+                        const rect = modalImg.getBoundingClientRect();
+                        const clickX = e.changedTouches[0].clientX - (rect.left + rect.width / 2);
+                        const clickY = e.changedTouches[0].clientY - (rect.top + rect.height / 2);
+
+                        scale = 2.5;
+                        panX = -clickX * (scale - 1);
+                        panY = -clickY * (scale - 1);
+                        modalImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
                     }
                 }
                 lastTapTime = now;
             }
         }, { passive: true });
-
-        // ---------- VALIDATION ET LOGIQUE QUIZ ----------
 
         function safeStripAccents(str) {
             if (!str) return "";
@@ -808,12 +838,18 @@
                 btn.className = "page-num";
                 btn.textContent = i + 1;
 
-                if (i === currentIndex) btn.classList.add("active");
-                else if (i <= highestIndexReached) {
+                if (i === currentIndex) {
+                    btn.classList.add("active");
+                } else if (i <= highestIndexReached) {
                     btn.classList.add("reachable");
                     btn.onclick = () => { currentIndex = i; displayQuestion(); };
                 }
                 container.appendChild(btn);
+            }
+
+            const activeBtn = document.querySelector('.page-num.active');
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         }
 
