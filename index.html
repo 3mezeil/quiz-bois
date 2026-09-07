@@ -107,24 +107,32 @@
             flex-shrink: 0;
         }
 
+        /* CORRECTION ICI : Hauteur stricte et absolue pour contrer le bug iOS/Safari */
         .image-wrapper {
             width: 100%;
-            flex: 1 1 200px;
-            max-height: 360px;
-            min-height: 200px;
+            height: 300px;
+            /* Hauteur fixe et grande */
+            flex: 0 0 300px;
+            /* Empêche la boîte de s'étirer ou rétrécir bizarrement */
             border-radius: 14px;
             overflow: hidden;
             background-color: #eee;
             margin-bottom: 16px;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
             position: relative;
+            /* Indispensable pour l'image en absolut */
         }
 
         .image-wrapper img {
+            position: absolute;
+            /* Détache l'image pour forcer Safari à recadrer */
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
+            /* Centre exact (50%), mais descendu un tout petit peu (55%) pour cacher le ruban/l'étiquette du haut */
+            object-position: 50% 55%;
             display: block;
             cursor: pointer;
             transition: transform 0.2s;
@@ -321,10 +329,8 @@
             min-width: 250px;
         }
 
-        /* CORRECTION SÉCURITÉ : Hauteur dynamique pour les textes longs */
         .feedback {
             min-height: 28px;
-            /* min-height au lieu de height strict */
             line-height: 1.3;
             margin-top: 10px;
             margin-bottom: 6px;
@@ -474,7 +480,10 @@
     </div>
 
     <script>
-        const NOMBRE_IMAGES_PAR_ESSENCE = 2;
+        // ==========================================
+        // PARAMÈTRE GLOBAL : Nombre d'images par essence
+        // ==========================================
+        const NOMBRE_IMAGES_PAR_ESSENCE = 3; // Mets 3, 4 ou 5 ici sans problème
 
         const baseData = [
             { baseFile: "padouk", name: "Padouk", answers: ["padouk", "padouk afrique"] },
