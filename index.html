@@ -25,8 +25,8 @@
             background: linear-gradient(135deg, #2b1d0c 0%, #1a1208 100%);
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 12px;
+            align-items: flex-start;
+            padding: 20px 16px;
             color: #333;
         }
 
@@ -34,19 +34,18 @@
             background: #ffffff;
             width: 100%;
             max-width: 440px;
-            height: 100%;
-            max-height: 800px;
+            margin: auto;
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             text-align: center;
             display: flex;
             flex-direction: column;
+            max-height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Animations */
         @keyframes shake {
 
             0%,
@@ -113,6 +112,7 @@
             flex-shrink: 0;
         }
 
+        /* Conteneur de l'image principale */
         .image-wrapper {
             width: 100%;
             flex: 1 1 120px;
@@ -123,7 +123,6 @@
             background-color: #eee;
             margin-bottom: 16px;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
             position: relative;
         }
 
@@ -132,6 +131,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            cursor: pointer;
             transition: transform 0.2s;
         }
 
@@ -139,6 +139,62 @@
             transform: scale(1.03);
         }
 
+        /* Boutons et points du carrousel */
+        .car-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            z-index: 5;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .car-btn:active {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .car-btn.left {
+            left: 10px;
+        }
+
+        .car-btn.right {
+            right: 10px;
+        }
+
+        .car-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Modal plein écran et Zoom */
         .modal {
             display: none;
             position: fixed;
@@ -146,18 +202,45 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0.98);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            z-index: 1005;
             cursor: pointer;
         }
 
-        .modal img {
-            max-width: 95%;
-            max-height: 95%;
-            border-radius: 8px;
+        .modal-content-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .modal-content-area img {
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
+            transform-origin: center center;
+            transition: transform 0.2s ease-out;
         }
 
         label {
@@ -174,14 +257,14 @@
             width: 100%;
             height: 52px;
             padding: 14px 16px;
-            font-size: 1.05rem;
+            font-size: 16px;
             border: 2px solid #ddd;
             border-radius: 12px;
             outline: none;
-            transition: border-color 0.2s;
             text-align: center;
             margin-bottom: 12px;
             flex-shrink: 0;
+            -webkit-appearance: none;
         }
 
         input[type="text"]:focus {
@@ -193,6 +276,7 @@
             color: #271a0c;
             font-weight: bold;
             border-color: #e9ecef;
+            opacity: 1;
         }
 
         .btn-row {
@@ -209,7 +293,7 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: 0.2s;
         }
 
         button:active {
@@ -249,7 +333,6 @@
             margin-top: 10px;
             font-weight: 600;
             font-size: 1rem;
-            flex-shrink: 0;
         }
 
         .feedback.success {
@@ -271,7 +354,6 @@
             justify-content: center;
             margin-top: 16px;
             margin-bottom: 12px;
-            flex-shrink: 0;
         }
 
         .page-num {
@@ -296,10 +378,6 @@
             cursor: pointer;
         }
 
-        .page-num.reachable:hover {
-            background: #dee2e6;
-        }
-
         .page-num.active {
             background: #8d5b28;
             color: #fff;
@@ -313,8 +391,7 @@
             background: #eee;
             border-radius: 3px;
             overflow: hidden;
-            flex-shrink: 0;
-            margin-top: auto;
+            margin-top: 10px;
         }
 
         .progress-bar {
@@ -335,8 +412,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            flex-grow: 1;
+            padding-top: 40px;
         }
     </style>
 </head>
@@ -344,172 +420,153 @@
 <body>
 
     <div id="image-modal" class="modal">
-        <img id="modal-img" src="" alt="Image plein écran">
+        <div class="modal-close" onclick="closeModal()">✕</div>
+        <div class="car-btn left" id="modal-btn-left" onclick="prevImg(event)" style="position:fixed; z-index:1002;">‹
+        </div>
+        <div class="car-btn right" id="modal-btn-right" onclick="nextImg(event)" style="position:fixed; z-index:1002;">›
+        </div>
+        <div class="modal-content-area" id="modal-content-area">
+            <img id="modal-img" src="" alt="Image en plein écran">
+        </div>
+        <div class="car-dots" id="modal-dots" style="position:fixed; bottom:25px;"></div>
     </div>
 
     <div class="card" id="quiz-card">
-        <div class="badge-container">
-            <span class="badge" id="progress-badge">Bois 1 sur 20</span>
-        </div>
+        <div class="badge-container"><span class="badge" id="progress-badge">Bois 1 sur 20</span></div>
         <h1>Identifier l'essence</h1>
 
-        <div class="image-wrapper" onclick="openModal()">
-            <img id="wood-img" src="" alt="Échantillon de bois">
+        <div class="image-wrapper" id="main-wrapper">
+            <div class="car-btn left" id="main-btn-left" onclick="prevImg(event)">‹</div>
+            <div class="car-btn right" id="main-btn-right" onclick="nextImg(event)">›</div>
+            <img id="wood-img" src="" alt="Échantillon de bois" onclick="openModal()">
+            <div class="car-dots" id="main-dots"></div>
         </div>
 
         <label for="answer-input">Quel est le nom de cette essence ?</label>
         <input type="text" id="answer-input" autocomplete="off" autocorrect="off" spellcheck="false">
 
         <div class="btn-row">
-            <button id="giveup-btn" class="btn-giveup" onclick="giveUp()">Abandonner</button>
-            <button id="action-btn" class="btn-validate" onclick="handleAction()">Valider</button>
+            <button type="button" id="giveup-btn" class="btn-giveup" onclick="giveUp()">Abandonner</button>
+            <button type="button" id="action-btn" class="btn-validate" onclick="handleAction()">Valider</button>
         </div>
 
         <div class="feedback" id="feedback-msg"></div>
-
         <div class="pagination" id="pagination"></div>
-
         <div class="progress-bar-container">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
     </div>
 
     <script>
-        const originalWoods = [
-            { file: "padouk.jpg", name: "Padouk", answers: ["padouk", "padouk afrique"] },
-            { file: "bubinga.jpg", name: "Bubinga", answers: ["bubinga"] },
-            { file: "amarante.jpg", name: "Amarante", answers: ["amarante"] },
-            { file: "frene.jpg", name: "Frêne", answers: ["frene"] },
-            { file: "peuplier.jpg", name: "Peuplier", answers: ["peuplier"] },
-            { file: "teck.jpg", name: "Teck", answers: ["teck"] },
-            { file: "acajou.jpg", name: "Acajou", answers: ["acajou"] },
-            { file: "erable.jpg", name: "Érable", answers: ["erable"] },
-            { file: "chene-rouge-dosse.jpg", name: "Chêne rouge (dosse)", answers: ["chene rouge dosse", "chene rouge", "chene"] },
-            { file: "sapin-douglas.jpg", name: "Sapin Douglas", answers: ["sapin douglas", "douglas", "sapin"] },
-            { file: "hetre.jpg", name: "Hêtre", answers: ["hetre"] },
-            { file: "merisier.jpg", name: "Merisier", answers: ["merisier"] },
-            { file: "cerisier.jpg", name: "Cerisier", answers: ["cerisier"] },
-            { file: "cedre.jpg", name: "Cèdre odoriférant", answers: ["cedre odoriferant", "cedre"] },
-            { file: "caryer.jpg", name: "Caryer (Hickory)", answers: ["caryer", "hickory", "caryer hickory"] },
-            { file: "tilleul.jpg", name: "Tilleul", answers: ["tilleul"] },
-            { file: "noyer-noir.jpg", name: "Noyer noir", answers: ["noyer noir"] },
-            { file: "noyer-cendre.jpg", name: "Noyer cendré", answers: ["noyer cendre"] },
-            { file: "chene-rouge-quartier.jpg", name: "Chêne rouge (quartier)", answers: ["chene rouge quartier", "chene sur quartier", "chene rouge", "chene"] },
-            { file: "pin-blanc.jpg", name: "Pin blanc", answers: ["pin blanc", "pin"] }
+        // ==========================================
+        // PARAMÈTRE GLOBAL : Nombre d'images par essence
+        // ==========================================
+        const NOMBRE_IMAGES_PAR_ESSENCE = 3; // Mets 3, 4 ou 5 ici sans problème
+
+        const baseData = [
+            { baseFile: "padouk", name: "Padouk", answers: ["padouk", "padouk afrique"] },
+            { baseFile: "bubinga", name: "Bubinga", answers: ["bubinga"] },
+            { baseFile: "amarante", name: "Amarante", answers: ["amarante"] },
+            { baseFile: "frene", name: "Frêne", answers: ["frene"] },
+            { baseFile: "peuplier", name: "Peuplier", answers: ["peuplier"] },
+            { baseFile: "teck", name: "Teck", answers: ["teck"] },
+            { baseFile: "acajou", name: "Acajou", answers: ["acajou"] },
+            { baseFile: "erable", name: "Érable", answers: ["erable"] },
+            { baseFile: "chene-rouge-dosse", name: "Chêne rouge (dosse)", answers: ["chene rouge dosse", "chene rouge", "chene"] },
+            { baseFile: "sapin-douglas", name: "Sapin Douglas", answers: ["sapin douglas", "douglas", "sapin"] },
+            { baseFile: "hetre", name: "Hêtre", answers: ["hetre"] },
+            { baseFile: "merisier", name: "Merisier", answers: ["merisier"] },
+            { baseFile: "cerisier", name: "Cerisier", answers: ["cerisier"] },
+            { baseFile: "cedre", name: "Cèdre odoriférant", answers: ["cedre odoriferant", "cedre"] },
+            { baseFile: "caryer", name: "Caryer (Hickory)", answers: ["caryer", "hickory", "caryer hickory"] },
+            { baseFile: "tilleul", name: "Tilleul", answers: ["tilleul"] },
+            { baseFile: "noyer-noir", name: "Noyer noir", answers: ["noyer noir"] },
+            { baseFile: "noyer-cendre", name: "Noyer cendré", answers: ["noyer cendre"] },
+            { baseFile: "chene-rouge-quartier", name: "Chêne rouge (quartier)", answers: ["chene rouge quartier", "chene sur quartier", "chene rouge", "chene"] },
+            { baseFile: "pin-blanc", name: "Pin blanc", answers: ["pin blanc", "pin"] }
         ];
 
         let woods = [];
         let currentIndex = 0;
         let highestIndexReached = 0;
         let currentState = 'answering';
+        let activeImageIndex = 0;
 
+        // Variables pour la Modale et le Zoom
         const modal = document.getElementById("image-modal");
-
-        function openModal() {
-            document.getElementById("modal-img").src = document.getElementById("wood-img").src;
-            modal.style.display = "flex";
-        }
-
-        function closeModal() {
-            modal.style.display = "none";
-        }
-
-        modal.addEventListener('click', closeModal);
-
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        modal.addEventListener('touchstart', function (e) {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, { passive: true });
-
-        modal.addEventListener('touchend', function (e) {
-            let touchEndX = e.changedTouches[0].screenX;
-            let touchEndY = e.changedTouches[0].screenY;
-
-            if (Math.abs(touchEndX - touchStartX) > 40 || Math.abs(touchEndY - touchStartY) > 40) {
-                closeModal();
-            }
-        }, { passive: true });
-
-        document.getElementById("answer-input").addEventListener("focus", function () {
-            setTimeout(() => {
-                document.getElementById("quiz-card").scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-            }, 300);
-        });
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        function stripAccents(str) {
-            return str
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase()
-                .trim();
-        }
-
-        function triggerAnimation(type) {
-            const card = document.getElementById("quiz-card");
-            card.classList.remove("shake", "pulse");
-            void card.offsetWidth;
-            card.classList.add(type);
-        }
+        const modalImg = document.getElementById("modal-img");
+        let scale = 1, panX = 0, panY = 0;
+        let startDist = 0, startPanX = 0, startPanY = 0;
+        let isPanning = false;
 
         function initQuiz() {
-            woods = shuffleArray(originalWoods).map(wood => ({
-                ...wood,
-                status: 'unanswered'
-            }));
+            woods = shuffleArray(baseData).map(wood => {
+                let images = [wood.baseFile + ".jpg"];
+                for (let i = 2; i <= NOMBRE_IMAGES_PAR_ESSENCE; i++) {
+                    images.push(wood.baseFile + i + ".jpg");
+                }
+                return { ...wood, images, status: 'unanswered' };
+            });
             currentIndex = 0;
             highestIndexReached = 0;
             displayQuestion();
         }
 
-        function renderPagination() {
-            const container = document.getElementById("pagination");
+        // ---------- CARROUSEL ----------
+        function updateImageViews() {
+            const item = woods[currentIndex];
+            const currentSrc = item.images[activeImageIndex];
+            document.getElementById("wood-img").src = currentSrc;
+            document.getElementById("modal-img").src = currentSrc;
+
+            renderDots("main-dots", item.images.length);
+            renderDots("modal-dots", item.images.length);
+
+            const displayArrows = item.images.length > 1 ? "flex" : "none";
+            document.getElementById("main-btn-left").style.display = displayArrows;
+            document.getElementById("main-btn-right").style.display = displayArrows;
+            document.getElementById("modal-btn-left").style.display = displayArrows;
+            document.getElementById("modal-btn-right").style.display = displayArrows;
+        }
+
+        function renderDots(containerId, count) {
+            const container = document.getElementById(containerId);
             container.innerHTML = "";
-
-            for (let i = 0; i < woods.length; i++) {
-                const btn = document.createElement("div");
-                btn.className = "page-num";
-                btn.textContent = i + 1;
-
-                if (i === currentIndex) {
-                    btn.classList.add("active");
-                } else if (i <= highestIndexReached) {
-                    btn.classList.add("reachable");
-                    btn.onclick = () => jumpToQuestion(i);
-                }
-
-                container.appendChild(btn);
+            if (count <= 1) return;
+            for (let i = 0; i < count; i++) {
+                const dot = document.createElement("div");
+                dot.className = "dot" + (i === activeImageIndex ? " active" : "");
+                container.appendChild(dot);
             }
         }
 
-        function jumpToQuestion(index) {
-            currentIndex = index;
-            displayQuestion();
+        function nextImg(e) {
+            if (e) e.stopPropagation();
+            const item = woods[currentIndex];
+            if (item.images.length <= 1) return;
+            activeImageIndex = (activeImageIndex + 1) % item.images.length;
+            updateImageViews();
+            resetZoom();
         }
 
+        function prevImg(e) {
+            if (e) e.stopPropagation();
+            const item = woods[currentIndex];
+            if (item.images.length <= 1) return;
+            activeImageIndex = (activeImageIndex - 1 + item.images.length) % item.images.length;
+            updateImageViews();
+            resetZoom();
+        }
+
+        // ---------- AFFICHAGE QUESTION ----------
         function displayQuestion() {
-            if (currentIndex > highestIndexReached) {
-                highestIndexReached = currentIndex;
-            }
-
+            if (currentIndex > highestIndexReached) highestIndexReached = currentIndex;
             renderPagination();
 
             const item = woods[currentIndex];
-            document.getElementById("wood-img").src = item.file;
+            activeImageIndex = 0;
+            updateImageViews();
+
             document.getElementById("progress-badge").textContent = `Bois ${currentIndex + 1} sur ${woods.length}`;
 
             const input = document.getElementById("answer-input");
@@ -518,31 +575,17 @@
             const feedback = document.getElementById("feedback-msg");
 
             if (item.status === 'unanswered') {
-                input.value = "";
-                input.disabled = false;
-
-                feedback.textContent = "";
-                feedback.className = "feedback";
-
-                actionBtn.textContent = "Valider";
-                actionBtn.className = "btn-validate";
+                input.value = ""; input.disabled = false;
+                feedback.textContent = ""; feedback.className = "feedback";
+                actionBtn.textContent = "Valider"; actionBtn.className = "btn-validate";
                 giveupBtn.style.display = "block";
-
                 currentState = 'answering';
-
-                // Focus automatique lors de l'arrivée sur une nouvelle question
-                setTimeout(() => {
-                    input.focus();
-                }, 50);
-
+                setTimeout(() => { input.focus(); }, 50);
             } else {
-                input.value = item.name;
-                input.disabled = true;
+                input.value = item.name; input.disabled = true;
                 giveupBtn.style.display = "none";
-                actionBtn.textContent = "Suivant ➔";
-                actionBtn.className = "btn-next";
+                actionBtn.textContent = "Suivant ➔"; actionBtn.className = "btn-next";
                 currentState = 'next';
-
                 feedback.textContent = `Bois déjà identifié : ${item.name}`;
                 feedback.className = "feedback info";
             }
@@ -551,29 +594,117 @@
             document.getElementById("progress-bar").style.width = `${progressPercent}%`;
         }
 
-        function handleAction() {
+        // ---------- MODALE ET ZOOM ----------
+        function openModal() {
+            resetZoom();
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            // Remettre le curseur dans le champ texte automatiquement après fermeture
             if (currentState === 'answering') {
-                submitAnswer();
-            } else if (currentState === 'next') {
-                goToNext();
+                setTimeout(() => {
+                    document.getElementById("answer-input").focus();
+                }, 50); // Un léger délai pour laisser la modale disparaître
             }
+        }
+
+        function resetZoom() {
+            scale = 1; panX = 0; panY = 0;
+            modalImg.style.transform = `translate(0px, 0px) scale(1)`;
+            modalImg.style.transition = "transform 0.2s ease-out";
+        }
+
+        const modalArea = document.getElementById("modal-content-area");
+
+        modalArea.addEventListener('touchstart', (e) => {
+            modalImg.style.transition = "none";
+            if (e.touches.length === 2) {
+                startDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+            } else if (e.touches.length === 1) {
+                isPanning = true;
+                startPanX = e.touches[0].pageX - panX;
+                startPanY = e.touches[0].pageY - panY;
+            }
+        }, { passive: false });
+
+        modalArea.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                scale = Math.min(Math.max(1, scale * (dist / startDist)), 5);
+                startDist = dist;
+                modalImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            } else if (e.touches.length === 1 && isPanning && scale > 1) {
+                e.preventDefault();
+                panX = e.touches[0].pageX - startPanX;
+                panY = e.touches[0].pageY - startPanY;
+                modalImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            }
+        }, { passive: false });
+
+        modalArea.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) startDist = 0;
+            if (e.touches.length === 0) {
+                isPanning = false;
+                modalImg.style.transition = "transform 0.2s ease-out";
+            }
+        });
+
+        let swipeStartX = 0;
+        let lastTapTime = 0;
+
+        modalArea.addEventListener('touchstart', e => {
+            if (e.touches.length === 1 && scale === 1) swipeStartX = e.touches[0].screenX;
+        }, { passive: true });
+
+        modalArea.addEventListener('touchend', e => {
+            if (e.changedTouches.length === 1) {
+                if (scale === 1) {
+                    let swipeEndX = e.changedTouches[0].screenX;
+                    if (swipeStartX - swipeEndX > 50) nextImg(null);
+                    if (swipeEndX - swipeStartX > 50) prevImg(null);
+                }
+                const now = new Date().getTime();
+                if (now - lastTapTime < 300) {
+                    if (scale > 1) resetZoom();
+                    else {
+                        scale = 2.5; panX = 0; panY = 0;
+                        modalImg.style.transform = `translate(0px, 0px) scale(${scale})`;
+                    }
+                }
+                lastTapTime = now;
+            }
+        }, { passive: true });
+
+        // ---------- VALIDATION ET LOGIQUE QUIZ ----------
+
+        function safeStripAccents(str) {
+            if (!str) return "";
+            return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        function handleAction() {
+            if (currentState === 'answering') submitAnswer();
+            else if (currentState === 'next') goToNext();
         }
 
         function submitAnswer() {
             const item = woods[currentIndex];
             const input = document.getElementById("answer-input");
-            const val = stripAccents(input.value);
-            const validList = item.answers.map(stripAccents);
             const feedback = document.getElementById("feedback-msg");
             const actionBtn = document.getElementById("action-btn");
             const giveupBtn = document.getElementById("giveup-btn");
+
+            const val = safeStripAccents(input.value);
+            const validList = item.answers.map(ans => safeStripAccents(ans));
 
             if (!val) return;
 
             if (validList.includes(val)) {
                 triggerAnimation("pulse");
                 item.status = 'answered';
-
                 input.value = item.name;
                 input.disabled = true;
                 input.blur();
@@ -585,9 +716,6 @@
                 actionBtn.textContent = "Suivant ➔";
                 actionBtn.className = "btn-next";
                 currentState = 'next';
-
-                // On redonne le focus à la fenêtre générale pour que 'Enter' soit capté facilement
-                window.focus();
             } else {
                 triggerAnimation("shake");
                 feedback.textContent = "Mauvaise réponse, essaie encore.";
@@ -604,7 +732,6 @@
             const giveupBtn = document.getElementById("giveup-btn");
 
             item.status = 'answered';
-
             input.value = item.name;
             input.disabled = true;
             input.blur();
@@ -616,8 +743,6 @@
             actionBtn.textContent = "Suivant ➔";
             actionBtn.className = "btn-next";
             currentState = 'next';
-
-            window.focus();
         }
 
         function goToNext() {
@@ -626,30 +751,71 @@
                 displayQuestion();
             } else {
                 document.getElementById("progress-bar").style.width = "100%";
-                document.getElementById("quiz-card").innerHTML = `
-        <div class="end-screen">
-          <div class="badge">Terminé</div>
-          <h2 class="finished-title">Félicitations</h2>
-          <p style="color: #666; margin: 12px 0 24px;">Tu as parcouru les ${woods.length} essences de bois.</p>
-          <button class="btn-restart" onclick="location.reload()">Recommencer le quiz</button>
-        </div>
+                document.getElementById("main-wrapper").style.display = "none";
+                document.querySelector("label").style.display = "none";
+                document.getElementById("answer-input").style.display = "none";
+                document.querySelector(".btn-row").style.display = "none";
+                document.getElementById("feedback-msg").style.display = "none";
+                document.getElementById("pagination").style.display = "none";
+
+                const card = document.getElementById("quiz-card");
+                const endScreen = document.createElement("div");
+                endScreen.className = "end-screen";
+                endScreen.innerHTML = `
+        <div class="badge">Terminé</div>
+        <h2 class="finished-title">Félicitations</h2>
+        <p style="color: #666; margin: 12px 0 24px;">Tu as parcouru les ${woods.length} essences de bois.</p>
+        <button type="button" class="btn-restart" onclick="location.reload()">Recommencer le quiz</button>
       `;
+                card.insertBefore(endScreen, document.getElementById("progress-bar-container"));
             }
         }
 
-        // Écouteur global sur le document entier pour la touche Entrée
         document.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
-                e.preventDefault(); // Évite tout comportement par défaut indésirable
+                e.preventDefault();
+                if (modal.style.display === "flex") return;
 
-                // Si on est en train de répondre, on ferme le clavier virtuel (mobile) avant de valider
                 if (currentState === 'answering' && document.activeElement === document.getElementById("answer-input")) {
                     document.getElementById("answer-input").blur();
                 }
-
                 handleAction();
             }
         });
+
+        function triggerAnimation(type) {
+            const card = document.getElementById("quiz-card");
+            if (!card) return;
+            card.classList.remove("shake", "pulse");
+            void card.offsetWidth;
+            card.classList.add(type);
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function renderPagination() {
+            const container = document.getElementById("pagination");
+            container.innerHTML = "";
+            for (let i = 0; i < woods.length; i++) {
+                const btn = document.createElement("div");
+                btn.className = "page-num";
+                btn.textContent = i + 1;
+
+                if (i === currentIndex) btn.classList.add("active");
+                else if (i <= highestIndexReached) {
+                    btn.classList.add("reachable");
+                    btn.onclick = () => { currentIndex = i; displayQuestion(); };
+                }
+                container.appendChild(btn);
+            }
+        }
 
         window.onload = initQuiz;
     </script>
